@@ -35,6 +35,7 @@ import org.wso2.ballerina.core.model.types.BTypes;
 import org.wso2.ballerina.core.model.values.BArray;
 import org.wso2.ballerina.core.model.values.BString;
 import org.wso2.ballerina.core.model.values.BValue;
+import org.wso2.ballerina.core.parser.ParserUtils;
 import org.wso2.ballerina.core.runtime.errors.handler.ErrorHandlerUtils;
 
 import java.nio.file.Path;
@@ -48,7 +49,7 @@ import java.util.List;
 class BMainRunner {
 
     static void runMain(Path sourceFilePath, List<String> args) {
-        BallerinaFile bFile = LauncherUtils.buildLangModel(sourceFilePath);
+        BallerinaFile bFile = ParserUtils.buildLangModel(sourceFilePath);
 
         // Check whether there is a main function
         BallerinaFunction function = (BallerinaFunction) bFile.getMainFunction();

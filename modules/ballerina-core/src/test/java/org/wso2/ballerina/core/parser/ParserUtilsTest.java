@@ -15,10 +15,11 @@
 *  specific language governing permissions and limitations
 *  under the License.
 */
-package org.ballerinalang.launcher;
+package org.wso2.ballerina.core.parser;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.ballerina.core.model.BallerinaFile;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,26 +29,28 @@ import java.nio.file.Paths;
  *
  * @since 0.8.0
  */
-public class LauncherTest {
+public class ParserUtilsTest {
 
     @Test(description = "Test getFileName method which returns the file name from the given path")
     public void testGetFileName() {
         Path p = Paths.get("/Users/john/Work/clones/ballerina/modules/foo.bal");
-        String fileName = LauncherUtils.getFileName(p);
+        String fileName = ParserUtils.getFileName(p);
         Assert.assertEquals(fileName, "foo.bal");
     }
 
-//    @Test(description = "Test getFileName method which returns the file name from the given Path")
-//    public void testGetFileNameWindows() {
-//        Path p = Paths.get("C:\\user\\docs\\foo.bal");
-//        String fileName = Utils.getFileName(p);
-//        Assert.assertEquals(fileName, "foo.bal");
-//    }
-
     @Test(description = "Test makeFirstLetterUpperCase method which makes the first letter lowercase")
     public void testMakeFirstLetterUpperCase() {
-        String actual = LauncherUtils.makeFirstLetterUpperCase("No file or directory found");
+        String actual = ParserUtils.makeFirstLetterUpperCase("No file or directory found");
         Assert.assertEquals(actual, "no file or directory found");
+    }
+
+
+    @Test(description = "Test buildLangModel method which creates BallerinaFile from the given path")
+    public void testBuildLangModel() {
+        Path filePath = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "balfiles", "foo.bal");
+        BallerinaFile bFile = ParserUtils.buildLangModel(filePath);
+
+        Assert.assertEquals(bFile.getFunctions().length, 1);
     }
 
 }

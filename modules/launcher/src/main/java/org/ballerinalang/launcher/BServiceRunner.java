@@ -24,6 +24,7 @@ import org.wso2.ballerina.core.model.Package;
 import org.wso2.ballerina.core.model.Resource;
 import org.wso2.ballerina.core.model.Service;
 import org.wso2.ballerina.core.nativeimpl.connectors.http.server.HTTPListenerInitializer;
+import org.wso2.ballerina.core.parser.ParserUtils;
 import org.wso2.ballerina.core.runtime.registry.ApplicationRegistry;
 
 import java.io.PrintStream;
@@ -57,7 +58,7 @@ class BServiceRunner {
     }
 
     private static void start(Path serviceFilePath) {
-        BallerinaFile bFile = LauncherUtils.buildLangModel(serviceFilePath);
+        BallerinaFile bFile = ParserUtils.buildLangModel(serviceFilePath);
         String fileName = LauncherUtils.getFileName(serviceFilePath);
 
         if (bFile.getServices().size() == 0) {

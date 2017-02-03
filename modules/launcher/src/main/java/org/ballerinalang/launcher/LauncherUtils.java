@@ -17,29 +17,10 @@
 */
 package org.ballerinalang.launcher;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.wso2.ballerina.core.exception.LinkerException;
-import org.wso2.ballerina.core.exception.SemanticException;
-import org.wso2.ballerina.core.interpreter.SymScope;
-import org.wso2.ballerina.core.model.BallerinaFile;
-import org.wso2.ballerina.core.model.builder.BLangModelBuilder;
-import org.wso2.ballerina.core.parser.BallerinaLexer;
-import org.wso2.ballerina.core.parser.BallerinaParser;
-import org.wso2.ballerina.core.parser.BallerinaParserErrorStrategy;
-import org.wso2.ballerina.core.parser.antlr4.BLangAntlr4Listener;
-import org.wso2.ballerina.core.runtime.internal.BuiltInNativeConstructLoader;
-import org.wso2.ballerina.core.runtime.internal.GlobalScopeHolder;
-import org.wso2.ballerina.core.semantics.SemanticAnalyzer;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -55,45 +36,11 @@ import java.util.List;
  */
 public class LauncherUtils {
 
-    static BallerinaFile buildLangModel(Path sourceFilePath) {
-        ANTLRInputStream antlrInputStream = getAntlrInputStream(sourceFilePath);
-
-        try {
-            // Setting the name of the source file being parsed, to the ANTLR input stream.
-            // This is required by the parser-error strategy.
-            antlrInputStream.name = getFileName(sourceFilePath);
-
-            BallerinaLexer ballerinaLexer = new BallerinaLexer(antlrInputStream);
-            CommonTokenStream ballerinaToken = new CommonTokenStream(ballerinaLexer);
-
-            BallerinaParser ballerinaParser = new BallerinaParser(ballerinaToken);
-            ballerinaParser.setErrorHandler(new BallerinaParserErrorStrategy());
-
-            BLangModelBuilder bLangModelBuilder = new BLangModelBuilder();
-            BLangAntlr4Listener ballerinaBaseListener = new BLangAntlr4Listener(bLangModelBuilder);
-            ballerinaParser.addParseListener(ballerinaBaseListener);
-            ballerinaParser.compilationUnit();
-            BallerinaFile balFile = bLangModelBuilder.build();
-
-            BuiltInNativeConstructLoader.loadConstructs();
-            SymScope globalScope = GlobalScopeHolder.getInstance().getScope();
-
-            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(balFile, globalScope);
-            balFile.accept(semanticAnalyzer);
-
-            return balFile;
-        } catch (ParseCancellationException | SemanticException | LinkerException e) {
-            throw createLauncherException(makeFirstLetterUpperCase(e.getMessage()));
-        } catch (Throwable e) {
-            throw createLauncherException(getFileName(sourceFilePath) + ": " +
-                    makeFirstLetterUpperCase(e.getMessage()));
-        }
-    }
-
     public static BLauncherException createUsageException(String errorMsg) {
         BLauncherException launcherException = new BLauncherException();
         launcherException.addMessage("ballerina: " + errorMsg);
         launcherException.addMessage("Run 'ballerina help' for usage.");
+
         return launcherException;
     }
 
@@ -101,19 +48,6 @@ public class LauncherUtils {
         BLauncherException launcherException = new BLauncherException();
         launcherException.addMessage(errorMsg);
         return launcherException;
-    }
-
-    private static ANTLRInputStream getAntlrInputStream(Path sourceFilePath) {
-        try {
-            InputStream inputStream = new FileInputStream(sourceFilePath.toFile());
-            return new ANTLRInputStream(inputStream);
-        } catch (FileNotFoundException e) {
-            throw createLauncherException("ballerina: no such file or directory '" +
-                    getFileName(sourceFilePath) + "'");
-        } catch (Throwable e) {
-            throw createUsageException("error reading file or directory'" +
-                    getFileName(sourceFilePath) + "': " + e.getMessage());
-        }
     }
 
     static String getFileName(Path sourceFilePath) {

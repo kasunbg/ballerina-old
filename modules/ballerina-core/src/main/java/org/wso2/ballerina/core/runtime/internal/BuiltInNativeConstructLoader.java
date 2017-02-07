@@ -106,6 +106,7 @@ import org.wso2.ballerina.core.nativeimpl.lang.message.SetHeader;
 import org.wso2.ballerina.core.nativeimpl.lang.message.SetJsonPayload;
 import org.wso2.ballerina.core.nativeimpl.lang.message.SetStringPayload;
 import org.wso2.ballerina.core.nativeimpl.lang.message.SetXMLPayload;
+import org.wso2.ballerina.core.nativeimpl.lang.mock.SetValue;
 import org.wso2.ballerina.core.nativeimpl.lang.string.BooleanValueOf;
 import org.wso2.ballerina.core.nativeimpl.lang.string.Contains;
 import org.wso2.ballerina.core.nativeimpl.lang.string.DoubleValueOf;
@@ -362,6 +363,9 @@ public class BuiltInNativeConstructLoader {
         registerFunction(scope, new ConvertToResponse());
         registerFunction(scope, new GetMethod());
         registerFunction(scope, new AcceptAndReturn());
+
+        //lang.mock
+        registerFunction(scope, new SetValue());
 
         registerConnector(scope, new HTTPConnector());
 

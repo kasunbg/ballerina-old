@@ -20,6 +20,7 @@ package org.wso2.ballerina.core.runtime.registry;
 
 import org.wso2.ballerina.core.model.Application;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +99,10 @@ public class ApplicationRegistry {
 
     public Application getApplication(String appName) {
         return applications.get(appName);
+    }
+
+    public Map<String, Application> getApplications() {
+        return Collections.unmodifiableMap(applications);
     }
 
 //    public Application getDefaultApplication() {
